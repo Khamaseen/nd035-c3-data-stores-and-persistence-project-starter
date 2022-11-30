@@ -6,6 +6,8 @@ import com.udacity.jdnd.course3.critter.controllers.PetController;
 import com.udacity.jdnd.course3.critter.controllers.UserController;
 import com.udacity.jdnd.course3.critter.controllers.dtos.*;
 import com.udacity.jdnd.course3.critter.controllers.ScheduleController;
+import com.udacity.jdnd.course3.critter.data.EmployeeSkill;
+import com.udacity.jdnd.course3.critter.data.PetType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -247,7 +249,7 @@ public class CritterFunctionalTest {
     }
     private static CustomerDTO createCustomerDTO() {
         CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setName("TestEmployee");
+        customerDTO.setName("TestCustomer");
         customerDTO.setPhoneNumber("123-456-789");
         return customerDTO;
     }

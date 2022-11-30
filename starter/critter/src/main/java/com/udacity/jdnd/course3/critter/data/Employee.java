@@ -1,16 +1,52 @@
 package com.udacity.jdnd.course3.critter.data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.DayOfWeek;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Employee extends Person {
+
+    @ManyToMany(mappedBy = "employees")
+    List<Schedule> schedules;
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private Set<EmployeeSkill> skills;
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private Set<DayOfWeek> daysAvailable;
+
     /**
-     *     private Set<EmployeeSkill> skills;
-     *     private Set<DayOfWeek> daysAvailable;
-     *
-     *  Hibernate types: https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#mapping-types
-     *     EmployeeSkill & DayOfWeek search 'enum ' <-- with space, see example PhoneType.
-     */
+     * ---------------------------------------------------
+     **/
+
+    public Set<EmployeeSkill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(Set<EmployeeSkill> skills) {
+        this.skills = skills;
+    }
+
+    public Set<DayOfWeek> getDaysAvailable() {
+        return daysAvailable;
+    }
+
+    public void setDaysAvailable(Set<DayOfWeek> daysAvailable) {
+        this.daysAvailable = daysAvailable;
+    }
+
+    public List<Schedule> getSchedules() {
+        return schedules;
+    }
+
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
+    }
 }
+
+/**
+ * private Set<EmployeeSkill> skills;
+ * private Set<DayOfWeek> daysAvailable;
+ */
