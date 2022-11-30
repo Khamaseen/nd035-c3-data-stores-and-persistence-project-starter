@@ -4,11 +4,14 @@ import com.udacity.jdnd.course3.critter.data.Customer;
 import com.udacity.jdnd.course3.critter.data.Pet;
 import com.udacity.jdnd.course3.critter.repositories.CustomerRepository;
 import com.udacity.jdnd.course3.critter.repositories.PetRepository;
+import com.udacity.jdnd.course3.critter.services.exceptions.OwnerNotFoundException;
+import com.udacity.jdnd.course3.critter.services.exceptions.PetNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +34,27 @@ public class PetService {
 
         pet.setCustomer(optionalCustomer.get());
 
-        return this.petRepository.save(pet);
+        Pet savedPet = this.petRepository.save(pet);
+
+        // TODO this is not nessecary on SQL, just becuase of the unit tests.. weirdly.
+        Customer customer = optionalCustomer.get();
+        if (customer.getPets() == null ){
+            List<Pet> pets = new ArrayList<Pet>();
+            pets.add(savedPet);
+            customer.setPets(pets);
+            this.customerRepository.save(customer);
+
+            return savedPet;
+        }
+
+        if (customer.getPets().contains(savedPet)) {
+            return savedPet;
+        }
+        List<Pet> customerPets = customer.getPets();
+        customerPets.add(savedPet);
+        this.customerRepository.save(customer);
+
+        return savedPet;
     }
 
     @Transactional

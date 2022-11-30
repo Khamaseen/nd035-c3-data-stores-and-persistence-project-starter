@@ -8,6 +8,9 @@ import com.udacity.jdnd.course3.critter.repositories.CustomerRepository;
 import com.udacity.jdnd.course3.critter.repositories.EmployeeRepository;
 import com.udacity.jdnd.course3.critter.repositories.PetRepository;
 import com.udacity.jdnd.course3.critter.repositories.ScheduleRepository;
+import com.udacity.jdnd.course3.critter.services.exceptions.EmployeeNotFoundException;
+import com.udacity.jdnd.course3.critter.services.exceptions.OwnerNotFoundException;
+import com.udacity.jdnd.course3.critter.services.exceptions.PetNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
@@ -44,7 +47,46 @@ public class ScheduleService {
         schedule.setEmployees(employees);
         schedule.setPets(pets);
 
-        return this.scheduleRepository.save(schedule);
+        Schedule savedSchedule = this.scheduleRepository.save(schedule);
+
+        // This is nessecary to pass the unit test. Unfortunate.. not sure what the problem is, dev environment doesnt need it.
+        employees.forEach(employee -> {
+            List<Schedule> employeeSchedules = employee.getSchedules();
+            if (employeeSchedules == null) {
+                List<Schedule> es = new ArrayList<Schedule>();
+                es.add(savedSchedule);
+                employee.setSchedules(es);
+            } else {
+                employeeSchedules.add(savedSchedule);
+                this.employeeRepository.save(employee);
+            }
+        });
+
+        pets.forEach(pet -> {
+            List<Schedule> petSchedules = pet.getSchedules();
+            if (petSchedules == null) {
+                List<Schedule> es = new ArrayList<Schedule>();
+                es.add(savedSchedule);
+                pet.setSchedules(es);
+            } else {
+                petSchedules.add(savedSchedule);
+                this.petRepository.save(pet);
+            }
+        });
+
+        customers.forEach(customer -> {
+            List<Schedule> customerSchedules = customer.getSchedules();
+            if (customerSchedules == null) {
+                List<Schedule> es = new ArrayList<Schedule>();
+                es.add(savedSchedule);
+                customer.setSchedules(es);
+            } else {
+                customerSchedules.add(savedSchedule);
+                this.customerRepository.save(customer);
+            }
+        });
+
+        return savedSchedule;
     }
 
     @Transactional
